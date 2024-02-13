@@ -5,6 +5,7 @@ import pandas as pd
 from pathlib import Path
 from langchain.agents import initialize_agent, Tool
 from langchain.llms import OpenAI
+from langchain_community.llms import OpenAI
 from langchain.chains.conversation.memory import ConversationBufferMemory
 from flask import Flask, render_template, request,jsonify
 from langchain.vectorstores import Pinecone
