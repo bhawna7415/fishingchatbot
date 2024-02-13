@@ -1,6 +1,7 @@
 import openai
 import pinecone
 import os
+from pinecone import Pinecone, Index, ServerlessSpec
 import pandas as pd
 from pathlib import Path
 from langchain.agents import initialize_agent, Tool
