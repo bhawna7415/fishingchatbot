@@ -57,12 +57,12 @@ embed = OpenAIEmbeddings(
 )
 
 # # initialize pinecone
-pc=pinecone.init(
+pinecone.init(
     api_key=pinecone_api_key,  # find at app.pinecone.io
     environment="gcp-starter",  # next to api key in console
 )
 
-index = pc.Index("fishingchatbot")
+index = pinecone.Index("fishingchatbot")
 
 text_field = "text"
 vectorstore = Pinecone(
