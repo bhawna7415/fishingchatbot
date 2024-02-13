@@ -4,15 +4,15 @@ import os
 import pandas as pd
 from pathlib import Path
 from langchain.agents import initialize_agent, Tool
-from langchain.llms import OpenAI
-# from langchain_community.llms import OpenAI
+# from langchain.llms import OpenAI
+from langchain_community.llms import OpenAI
 from langchain.chains.conversation.memory import ConversationBufferMemory
 from flask import Flask, render_template, request,jsonify
-from langchain.vectorstores import Pinecone
-# from langchain_community.vectorstores import Pinecone
+# from langchain.vectorstores import Pinecone
+from langchain_community.vectorstores import Pinecone
 from langchain.embeddings.openai import OpenAIEmbeddings 
-from langchain.chat_models import ChatOpenAI
-# from langchain_community.chat_models import ChatOpenAI
+# from langchain.chat_models import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 from concurrent.futures import ThreadPoolExecutor
@@ -57,25 +57,26 @@ embed = OpenAIEmbeddings(
     openai_api_key=openai_api_key
 )
 
-# # initialize pinecone
-pinecone.init(
-    api_key=pinecone_api_key,  # find at app.pinecone.io
-    environment="gcp-starter",  # next to api key in console
-)
+# Initialize Pinecone instance
+pc = Pinecone(api_key=pinecone_api_key)
 
-index = pinecone.Index("fishingchatbot")
+# Create or retrieve the index
+index_name = "fishingchatbot"
+dimension = 1536
+metric = "euclidean"
+cloud = "aws"
+region = "us-west-2"
 
-text_field = "text"
-vectorstore = Pinecone(
-    index, embed, text_field
-)
+if index_name not in pc.list_indexes().names():
+    spec = ServerlessSpec(cloud=cloud, region=region)
+    pc.create_index(name=index_name, dimension=dimension, metric=metric, spec=spec)
 
-query = "Provide me answers from vector storage, if answers is not available in vector storage than please provide answers from openai."
+# Get the index
+index = pc.index(index_name)
 
-vectorstore.similarity_search(
-    query,  
-    k=3  
-)
+# Initialize Langchain Pinecone
+vectorstore = LangchainPinecone(index, embed, "text")
+
 # completion llm
 llm = ChatOpenAI(
     openai_api_key=openai_api_key,
