@@ -1,0 +1,138 @@
+{% set image_src = url_for('static', filename='img/northland_logo.jpg') %}
+<html>
+
+<head>
+  <title>CHATBOT</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/demo.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <section style="background-color: #eee;">
+    <div class="container py-5">
+
+      <div class="row d-flex justify-content-center">
+        <div class="col-md-8 col-lg-6 col-xl-4">
+
+          <div class="card" id="chat1" style="border-radius: 15px; min-height: 100vh;">
+            <div class="card-header d-flex  align-items-center p-3  text-white border-bottom-0"
+              style="border-top-left-radius: 15px;background-color: #1f1f21; border-top-right-radius: 15px;">
+
+              <img src="{{url_for('static', filename='img/northland_logo.jpg')}}" alt="avatar 1"
+                style="width: 45px; height: 100%; border-radius: 20px;">
+              <p class="p-3 mb-0 fw-bold">Northland Tackle</p>
+
+              <span class="position-absolute top-05 end-0 p-4">
+                <i class="fa fa-repeat me-2" aria-hidden="true"></i>
+                <i class="fa fa-ellipsis-v me-2" aria-hidden="true"></i>
+                <i class="fa fa-times" aria-hidden="true"></i>
+              </span>
+            </div>
+            <div class="card-body">
+              <div id="chatBox" style="max-height: 480px; overflow-y:auto ;">
+                <div class="d-flex flex-row justify-content-start mb-4">
+                  <img src="{{url_for('static', filename='img/northland_logo.jpg')}}" alt="avatar 1"
+                    style="width: 45px; height: 100%;">
+                  <div class="p-3 ms-3" style="border-radius: 15px; background-color: rgba(57, 192, 237,.2);">
+                    <p class="small mb-0">Welcome to Northland Fishing Tackle! We're thrilled to assist you with your
+                      fishing needs.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div id="chatLog">
+              </div> -->
+              <!-- <div class="d-flex flex-row justify-content-end mb-4" id="chatLogContainer">
+              </div> -->
+
+              <div id="loader" style="display: none; text-align: center;">
+                <i class="fa fa-spinner fa-spin"></i> Loading...
+              </div>
+
+              <div class="message-box chatContainer">
+                <div class="d-flex align-items-center">
+                  <input type="text" class="form-control" id="userBox" onkeydown="if(event.keyCode == 13){ talk() }"
+                    placeholder="Type your Question" />
+                  <span class="icon mx-2 mt-3">
+                    <i class="fa fa-smile-o" aria-hidden="true"></i>
+                  </span>
+                  <span class="icon mt-3">
+                    <i class="fa fa-paperclip" aria-hidden="true"></i>
+                  </span>
+                  <span class="icon mt-3">
+                    <i class="fa fa-paper-plane" aria-hidden="true" onclick="talk()"></i>
+                  </span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <script>
+    var responseCounter = 0;  // To keep track of the response containers
+    function showLoader() {
+      $('#loader').css('display', 'block');
+      // $('#chatBox').scrollTop($(window).height());
+      $('#chatBox').scrollTop($('#chatBox')[0].scrollHeight);
+    }
+
+    function hideLoader() {
+      $('#loader').css('display', 'none');
+    }
+
+    function talk() {
+      searchkey = $('#userBox').val();
+      $('#userBox').val('');
+
+      // Append user's question to chat box
+      $('#chatBox').append('<div class="question d-flex flex-row justify-content-end mb-4 "><img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp" alt="avatar 1" style="width: 45px; height: 40px; "> <div class="p-3 ms-3" style="border-radius: 15px; background-color: rgb(233 235 239);">' + searchkey + '</div></div>');
+
+      if (searchkey != '' && searchkey != undefined) {
+        showLoader();
+        $.ajax({
+          type: 'GET',
+          url: "http://127.0.0.1:5000/query",
+          contentType: 'application/json;charset=UTF-8',
+          data: { "text": searchkey },
+          success: function (res) {
+            hideLoader();
+            responseCounter++;
+
+            // Append a new response container to the chat box
+            var responseHTML = '<div class="d-flex flex-row justify-content-start mb-4 reschat" id="response' + responseCounter + '"><img src="{{ image_src }}" alt="avatar 1" style="width: 45px; height: 100%;"><div class="p-3 ms-3" style="border-radius: 15px; background-color: rgba(57, 192, 237,.2);"><p class="small mb-0"></p></div></div>';
+            $('#chatBox').append(responseHTML);
+
+            // Append response content gradually
+            var i = 0;
+            var $lastReschat = $("#response" + responseCounter + " p");
+            var recursiveTime = setInterval(function () {
+              if (res.length > i) {
+                $lastReschat.append(res[i]);
+                // $('#chatBox').scrollTop($(window).height());
+                $('#chatBox').scrollTop($('#chatBox')[0].scrollHeight);
+                i++;
+              } else {
+                clearInterval(recursiveTime);
+              }
+            }, 10);
+          },
+          complete: function () {
+            hideLoader();
+          }
+        });
+      }
+    }
+  </script>
+</body>
+
+</html>
