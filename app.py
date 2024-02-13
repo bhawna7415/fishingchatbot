@@ -56,7 +56,7 @@ embed = OpenAIEmbeddings(
 
 # # initialize pinecone
 pinecone.init(
-    api_key=os.environ.get('PINECONE_API_KEY'),  # find at app.pinecone.io
+    api_key=pinecone_api_key,  # find at app.pinecone.io
     environment="gcp-starter",  # next to api key in console
 )
 
