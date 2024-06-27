@@ -1,6 +1,5 @@
 {% set image_src = url_for('static', filename='img/northland_logo.jpg') %}
 <html>
-
 <head>
   <title>CHATBOT</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/demo.css') }}">
@@ -56,13 +55,13 @@
                 <div class="d-flex align-items-center">
                   <input type="text" class="form-control" id="userBox" onkeydown="if(event.keyCode == 13){ talk() }"
                     placeholder="Type your Question" />
-                  <span class="icon mx-2 mt-3">
+                  <!-- <span class="icon mx-2 mt-3">
                     <i class="fa fa-smile-o" aria-hidden="true"></i>
                   </span>
                   <span class="icon mt-3">
                     <i class="fa fa-paperclip" aria-hidden="true"></i>
-                  </span>
-                  <span class="icon mt-3">
+                  </span> -->
+                  <span class="icon mt-2 px-2">
                     <i class="fa fa-paper-plane" aria-hidden="true" onclick="talk()"></i>
                   </span>
                 </div>
@@ -101,7 +100,7 @@
         showLoader();
         $.ajax({
           type: 'GET',
-          url: "http://127.0.0.1:5000/query",
+          url: "http://3.25.107.24/query",
           contentType: 'application/json;charset=UTF-8',
           data: { "text": searchkey },
           success: function (res) {
