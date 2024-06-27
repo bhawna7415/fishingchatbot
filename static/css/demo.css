@@ -108,3 +108,18 @@ p.qtime {
     left: 2%;
     right: 0;
   }
+
+  .mb-4 {
+    margin-bottom: 1.5rem!important;
+    margin-top: 1.5rem !important;
+}
+
+.msg-main{
+  border-radius: 15px;
+  background-color: rgba(57, 192, 237, .2);
+  max-width: 86%;
+  margin: 0 !important;
+  text-align: left;
+  
+  margin: 0 0 0 auto !important;
+}
